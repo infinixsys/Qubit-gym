@@ -1,0 +1,1273 @@
+Product Blueprint: AI-First Fitness Operating System
+Product Requirements Document · PRD v1.0 · October 2026
+
+The product should be designed as a unified fitness operating system for gym businesses and consumers, not merely a gym management app with an AI chatbot added to it.
+
+The platform will combine multi-branch gym management, consumer fitness experiences, adaptive AI coaching, business automation, connected equipment, and a fitness marketplace. It should be commercially viable as a subscription-based SaaS product while allowing the consumer experience to grow into a larger fitness network.
+
+The objective is to create a differentiated product that competes on measurable outcomes, operational intelligence, interoperability, and personalization—not on unsupported claims that existing competitors lack particular features.
+
+
+
+
+
+
+
+evofitness.de
+
+
+AI-native
+
+Adaptive fitness and authorized business actions
+
+
+Multi-tenant
+
+Independent gyms, chains, studios and franchises
+
+
+Omnichannel
+
+Android, iOS, web, kiosks and staff workspaces
+
+
+Automation-first
+
+Event-driven workflows with permissions and auditability
+
+
+
+
+1. Executive product definition
+Working product name: QubitFit AI
+
+Provisional name only; trademark, domain and brand availability have not been verified.
+
+Product category: AI-powered fitness SaaS, gym ERP, personal fitness platform and connected-fitness ecosystem.
+
+Product vision: Every member gets a personalized fitness journey, every trainer gets an intelligent coaching assistant, and every gym operator gets an operational copilot that helps run the business reliably.
+Product objectives
+1. Increase member engagement, workout consistency, and membership retention.
+2. Reduce administrative work for gym staff and trainers.
+3. Improve lead conversion, renewals, and revenue visibility for gym owners.
+4. Provide adaptive, evidence-informed fitness guidance with human oversight.
+5. Support single gyms and multi-location fitness networks through one extensible platform.
+6. Build a consumer fitness identity that can eventually work across participating gyms and independent fitness providers.
+7. Make AI behavior observable, measurable, permission-controlled, and safe.
+Product boundaries
+The first release is not intended to build proprietary fitness hardware, train a foundational AI model from scratch, deliver medical diagnosis, or operate physical gym equipment without validated integrations and safety controls.
+
+The product should integrate with established providers wherever possible and invest its differentiation in its software, workflows, data models, and user experience.
+2. Target customers and users
+
+
+
+
+
+
+
+
+
+Segment A — Independent gyms
+
+One to three locations, owner-managed operations, limited staff, recurring membership revenue.
+
+Primary value: simpler administration, better lead follow-up, renewals and payment tracking.
+
+
+
+
+
+
+
+
+
+
+
+Segment B — Gym chains and franchises
+
+Multiple branches, regional management, shared memberships, centralized reporting and standardized operating procedures.
+
+Primary value: consolidated intelligence, governance, automation and branch comparisons.
+
+
+
+
+
+
+
+
+
+
+
+Segment C — Trainers and fitness professionals
+
+Independent trainers, group instructors, nutrition professionals and remote coaches.
+
+Primary value: client management, program delivery, progress reviews and paid services.
+
+
+
+
+
+
+
+
+
+
+
+Segment D — Fitness consumers
+
+Beginners, regular gym users, home exercisers and people seeking classes or personal training.
+
+Primary value: one adaptive fitness experience across compatible services, devices and locations.
+
+
+
+Core personas
+Persona	Primary job to be done
+Gym owner	Grow recurring revenue and control operating costs
+Branch manager	Keep daily operations, staff and facilities running smoothly
+Receptionist	Handle check-ins, enquiries, bookings and payments
+Sales executive	Convert leads into paid memberships
+Personal trainer	Deliver effective, individualized coaching
+Group instructor	Schedule and deliver classes
+Member	Make consistent progress toward fitness goals
+Independent coach	Manage clients and monetize coaching
+Platform administrator	Operate tenants, plans, integrations and platform reliability
+Corporate administrator	Manage eligible employee benefits without accessing private health details
+
+3. Product architecture and applications
+The system should contain four product surfaces backed by shared domain services.
+Experience layer
+
+Member mobile app · Trainer app · Member web portal · Staff web console · Platform admin
+
+API and identity layer
+
+Authentication · Tenant context · Authorization · API gateway · Rate limits · Consent enforcement
+
+Domain services
+Memberships & billing
+
+Training & nutrition
+
+Bookings & access
+
+CRM & automation
+
+Analytics & reporting
+
+AI intelligence
+
+
+
+Data and integration layer
+
+PostgreSQL · Object storage · Background jobs · Audit records · Analytics · Payment providers · Wearables · Access hardware
+
+
+Application responsibilities
+- Member app: onboarding, workout execution, AI coach, bookings, nutrition, membership and payments.
+- Trainer app/workspace: client roster, session preparation, program editing, progress review and follow-ups.
+- Gym web console: memberships, CRM, access, scheduling, finance, staff, facilities and analytics.
+- Platform admin: tenant onboarding, SaaS subscriptions, feature entitlements, support, integration health, security events and platform monitoring.
+- Public member portal: discovery, pricing, trial registration, membership purchase and account self-service.
+The mobile app should be built with React Native or Flutter; the web applications can use Next.js/React. The backend should start as a modular monolith with clean domain boundaries, rather than dozens of independently deployed microservices. Extract services only when scale, team ownership, or reliability requirements justify it.
+4. Functional requirements and module specifications
+This section defines the required behavior of the platform. Each module should be implemented as a real, connected workflow, not merely as a set of screens.
+
+Priority definitions:
+- P0 — Launch critical: Required for a commercially usable first release.
+- P1 — Differentiation: Required for the first major upgrade.
+- P2 — Expansion: Requires additional integrations, data maturity or market validation.
+4.1 Identity, organizations and tenant management
+P0
+ID	Requirement	Acceptance criteria
+ID-01	Authentication	Users can register, sign in, recover accounts and terminate sessions securely.
+ID-02	Organization onboarding	A business can create an organization, its first branch and an owner account.
+ID-03	Multi-tenancy	All tenant-owned records are isolated between organizations.
+ID-04	Staff invitations	Authorized managers can invite staff and assign predefined roles.
+ID-05	Membership in organizations	A person can be a member at one gym and a trainer or employee at another, subject to separate permissions.
+ID-06	Branch context	Staff see only authorized branches and can switch context where permitted.
+ID-07	SaaS entitlements	Platform plans control access to features, usage quotas and integration limits.
+ID-08	Auditability	Sensitive actions record actor, timestamp, target and outcome.
+
+Additional behavior:
+- Email and phone verification, with appropriate rate limits.
+- Social sign-in and enterprise SSO as configurable options.
+- Session revocation after account compromise or staff removal.
+- Support-assisted recovery with identity verification.
+- Invitation expiry and revocation.
+- Organization suspension that does not silently delete its data.
+- Subscription grace periods and read-only access rules.
+- Data export and account deletion requests.
+4.2 Membership and subscription engine
+P0
+Required entities include membership products, pricing versions, contracts, entitlements, member subscriptions, freezes, renewal schedules and payment records.
+
+Core functionality:
+- Configure membership duration, price, taxes, benefits, access hours and eligible branches.
+- Sell memberships online and at reception.
+- Record payment status separately from membership status.
+- Support full and partial payments, where the chosen payment provider and business policy permit.
+- Configure recurring billing and renewal consent.
+- Calculate pro-rated changes using explicit, testable rules.
+- Apply coupons, discounts and approval limits.
+- Manage upgrades, downgrades, freezes, cancellations and reactivations.
+- Generate receipts, invoices and credit notes.
+- Configure trial memberships and guest passes.
+- Support class credits and personal-training session packages.
+- Track expiry, renewal eligibility and failed payments.
+- Handle disputes and refunds without erasing the original financial record.
+Critical business rule: A payment success event and a membership activation are separate operations. Activation must follow validated payment or an authorized complimentary/credit arrangement, and duplicate gateway notifications must not create duplicate memberships.
+4.3 Booking and scheduling engine
+P0
+Support:
+- Group classes, personal-training sessions, assessments, consultations and facility reservations.
+- Recurring schedules and schedule exceptions.
+- Instructor, room, equipment and branch availability.
+- Capacity limits, eligibility rules, booking windows and cancellation policies.
+- Waitlists and automatic promotion.
+- Booking credits and package deductions.
+- Time-zone-aware scheduling.
+- Calendar synchronization.
+- No-show and attendance records.
+- Trainer substitution and customer notifications.
+- Class utilization and booking demand reports.
+Concurrency requirement: If one place remains in a class and two members attempt to book simultaneously, the system must allow no more than one successful reservation. Enforce this in the database and booking service, not merely in the interface.
+4.4 Training and workout engine
+P0 foundation; P1 adaptive AI
+Build a structured exercise library with:
+- Exercise identifiers, names, descriptions and localized labels.
+- Target muscle groups, movement patterns and equipment requirements.
+- Difficulty, coaching cues, contraindication notes and approved alternatives.
+- Video and image assets with licensing metadata.
+- Exercise variations and substitution relationships.
+- Sets, repetitions, duration, distance, tempo, rest and intensity targets.
+- Workout templates, training plans and scheduled sessions.
+- Completed session records and individual set performance.
+- Personal records and progress summaries.
+- Trainer approvals and plan version history.
+Workout lifecycle:
+
+Draft → Review → Published → Scheduled → In progress → Completed
+
+Allow cancellation or abandonment from applicable states. A plan change must not silently overwrite completed workout history.
+
+The AI should create plans from approved templates and exercise constraints initially. Trainers must be able to review, edit and publish plans, especially when the member reports pain, a limitation, or a relevant medical restriction.
+4.5 AI fitness coach and adaptive intelligence
+P1
+The AI fitness coach should be a persistent service with structured context, explicit capabilities, and an evaluation framework.
+
+Inputs
+- User goals and stated preferences.
+- Training experience and available equipment.
+- Completed and skipped workouts.
+- Logged sets, repetitions, intensity and personal records.
+- Self-reported fatigue, soreness and discomfort.
+- Optional, authorized wearable data.
+- Trainer-approved program constraints.
+- Available workout time.
+Outputs
+- Recommended workout for the day.
+- Exercise substitutions with explanations.
+- Suggested progression or regression.
+- Rest-day or lighter-session recommendations.
+- Weekly progress summary.
+- Goal adherence and consistency insights.
+- Clarifying questions when data is insufficient.
+- Escalation to a trainer or appropriate professional when needed.
+Functional requirements
+ID	Requirement	Acceptance criteria
+AI-01	Context-aware recommendations	Uses relevant, authorized member data rather than generic prompts alone.
+AI-02	Structured output	Workout recommendations conform to a validated schema.
+AI-03	Constraint validation	Rejects plans that violate configured equipment, scheduling or safety constraints.
+AI-04	Explainability	Shows the key factors behind a recommendation in understandable language.
+AI-05	Human review	Trainer approval can be required by policy or risk category.
+AI-06	Feedback loop	Records whether a recommendation was accepted, modified or rejected.
+AI-07	Evaluation	Tracks quality, constraint violations, safety failures and user feedback.
+AI-08	Model fallback	Handles model timeouts and unavailable providers gracefully.
+AI-09	Privacy	Sends only the minimum necessary context to the selected AI provider.
+AI-10	Versioning	Stores model, prompt/policy and recommendation versions for reproducibility.
+
+Adaptive workout workflow
+1. Collect permitted context
+
+Goals, history, equipment, availability and optional recovery data
+
+2. Generate candidate plan
+
+Rules engine + AI recommendations
+
+3. Validate constraints
+
+Schema, progression limits, equipment and safety checks
+
+4. Apply review policy
+
+Automatic publication only for eligible low-risk recommendations; otherwise request approval
+
+5. Observe outcomes and improve
+
+Completion, exertion, feedback and future recommendation evaluation
+
+
+Do not allow the language model to directly modify financial records, access credentials, or unrestricted production data. AI should request narrowly scoped application tools, and the backend should independently authorize and validate every action.
+4.6 Nutrition and lifestyle module
+P1
+- Food catalog with serving sizes and nutrient information.
+- Regional Indian meals and configurable dietary preferences.
+- Meal plans, substitutions and shopping lists.
+- Food logging through search, barcode scanning and optional image estimation.
+- Calorie and macronutrient summaries.
+- Hydration and habit tracking.
+- Optional sleep and activity data import.
+- Nutritionist-created plans and review workflows.
+- Allergen and dietary restriction flags.
+- Nutrition data provenance and confidence indicators.
+- Member-controlled data sharing.
+AI-generated meal plans should honor stated restrictions and avoid unsupported medical nutrition claims. Image-based food estimates should be presented as approximations.
+4.7 CRM and revenue growth
+P0
+- Lead capture and deduplication.
+- Configurable sales pipeline.
+- Lead source and campaign attribution.
+- Sales assignments and follow-up tasks.
+- Trial booking and visit outcomes.
+- Offer, quotation and membership recommendation management.
+- Conversion, loss-reason and campaign reports.
+- Renewal pipeline.
+- Automated notifications and scheduled workflows.
+- Consent-aware communications.
+- Integration with website forms and supported messaging services.
+AI features include lead summarization, response drafting, next-action recommendations, inactivity alerts and conversion trend analysis.
+
+A lead score must be based on documented business signals and evaluated against actual conversion outcomes. Do not treat demographic or sensitive health characteristics as proxies for purchasing intent.
+4.8 Payments and finance
+P0
+- Payment intents, transactions and provider event logs.
+- Invoices, receipts, refunds and credit notes.
+- Subscription billing and payment retries.
+- Cash and offline payment reconciliation.
+- Tax configuration and invoice numbering.
+- Discount and refund approval workflows.
+- Branch and service-level financial reports.
+- Outstanding balances and receivables.
+- Gateway settlement reconciliation.
+- Trainer commissions and payroll export.
+- Expense and vendor records.
+- Revenue and cash-flow reporting.
+Use a payment-provider integration for card and UPI processing rather than building payment processing from scratch. Never store raw card security codes or unnecessary payment credentials.
+4.9 Access control and attendance
+P0 basic check-in; P1 hardware integrations
+- QR check-in and authorized receptionist check-in.
+- Membership entitlement validation.
+- Attendance history and occupancy estimates.
+- Guest registration.
+- Duplicate entry prevention where applicable.
+- Device and gate configuration.
+- Offline behavior and synchronization policy.
+- Access event audit logs.
+- Integration health and failure alerts.
+- Compatible RFID, biometric or turnstile integration.
+- Emergency override procedures.
+Access hardware should enforce its own safety mechanisms. The software must not replace emergency exits or required physical safety systems.
+4.10 Multi-branch administration and franchise management
+P0 foundations; P1 advanced governance
+- Organization and branch hierarchy.
+- Branch-specific schedules, products and pricing rules.
+- Cross-branch access entitlements.
+- Centralized membership and CRM visibility.
+- Branch-level roles and permission overrides.
+- Staff assignment and transfers.
+- Consolidated revenue and attendance dashboards.
+- Standard operating procedures and checklists.
+- Franchise fee and revenue-share calculations.
+- Regional performance comparisons.
+- Multi-currency, tax and time-zone configuration for supported markets.
+4.11 Facilities and inventory
+P1
+- Equipment register and asset tags.
+- Maintenance tickets and preventive maintenance schedules.
+- Service vendors, warranty and repair records.
+- Cleaning schedules and inspection checklists.
+- Equipment downtime tracking.
+- Spare parts and consumables inventory.
+- Purchase requests and stock adjustments.
+- Locker and amenity management.
+- Incident and safety reporting.
+- Optional IoT sensor integrations.
+- Repair-cost and equipment utilization analysis.
+4.12 Consumer fitness marketplace
+P2
+- Discover participating gyms, studios, trainers and classes.
+- Search by location, price, schedule, facilities and accessibility.
+- Verified provider profiles and service descriptions.
+- Trial sessions and booking.
+- Membership purchase and eligible cross-provider access.
+- Reviews with moderation and anti-fraud controls.
+- Partner commissions and settlement reports.
+- Cancellation, refund and dispute workflows.
+- Provider onboarding and verification.
+- Consumer support and service recovery.
+Launch the marketplace only when there are enough participating providers and reliable booking, payment and cancellation workflows. A directory without dependable inventory and availability will not create a compelling marketplace.
+4.13 Business intelligence and AI operations copilot
+P1
+The business copilot should answer questions from authorized, current data and execute approved actions through controlled application tools.
+
+Examples:
+- “Which members have not visited for 14 days?”
+- “Show renewals due in the next seven days.”
+- “Which leads are overdue for follow-up?”
+- “Which classes are underbooked compared with their history?”
+- “Prepare the weekly branch performance report.”
+- “Draft a renewal campaign for members who have consented to marketing.”
+- “Create tasks for failed-payment follow-ups.”
+- “Find equipment with repeated maintenance costs.”
+Every answer involving business figures should identify its reporting period, definitions and data freshness.
+
+Every action should have a preview, permission check, confirmation where necessary, execution record and outcome status. Financial transactions, mass communications, account suspension and access-control changes should require explicit authorization.
+5. Complete screen inventory
+The inventory below is a planning baseline for UX design and development estimation. Screens with similar structures should share components and layouts rather than be built as unrelated pages.
+5.1 Member mobile application — 32 screen groups
+Member app
+
+Android + iOS
+
+
+ONBOARDING AND ACCOUNT
+1. Splash screen and app initialization
+2. Welcome, language and accessibility preferences
+3. Registration, login and account recovery
+4. Verification and consent management
+5. Fitness onboarding questionnaire
+6. Goals, preferences and available equipment
+   
+   DAILY FITNESS
+7. Personalized home dashboard
+8. AI fitness coach conversation
+9. Today's recommended workout
+10. Exercise library and exercise details
+11. Workout player and rest timer
+12. Set logging and personal records
+13. Workout summary and feedback
+14. Training plan and calendar
+15. Progress charts and measurements
+16. Recovery and activity insights
+    
+    NUTRITION AND COMMUNITY
+17. Meal planner and food search
+18. Food log and nutrition summary
+19. Water and lifestyle tracker
+20. Challenges, achievements and rewards
+21. Community and privacy-controlled sharing
+    
+    GYM SERVICES
+22. Gym and studio discovery
+23. Gym details, facilities and pricing
+24. Class timetable and booking
+25. Booking details and waitlist status
+26. Trainer directory and trainer profile
+27. Personal-training session management
+28. Digital membership and QR check-in
+29. Membership purchase, renewal and freeze
+30. Payments, invoices and transaction history
+    
+    ACCOUNT AND SUPPORT
+31. Notifications, support and help center
+32. Profile, connected devices, privacy and settings
+
+5.2 Gym admin web application — 48 screen groups
+Gym operations console
+
+Responsive web
+
+
+OVERVIEW AND CONFIGURATION
+1. Owner dashboard
+2. Branch dashboard
+3. Organization profile and settings
+4. Branch directory and branch details
+5. Subscription plan and feature entitlements
+6. Roles, permissions and staff access
+   
+   MEMBERS AND SALES
+7. Member directory
+8. Member profile and activity timeline
+9. Membership catalog and pricing
+10. Subscription details and lifecycle actions
+11. Expiring memberships and renewal queue
+12. Freeze, cancellation and reactivation management
+13. Lead pipeline board
+14. Lead details and interaction history
+15. Follow-up tasks and sales calendar
+16. Trial bookings and visit tracking
+17. Offers, discounts and approvals
+18. Referral and campaign management
+    
+    FITNESS DELIVERY
+19. Exercise library administration
+20. Workout templates
+21. Training plans and approval queue
+22. Trainer directory and profiles
+23. Trainer availability and calendar
+24. Client assignments and progress reviews
+25. Class catalog
+26. Timetable and room scheduling
+27. Booking roster, waitlists and attendance
+28. Nutritionist and consultation management
+    
+    OPERATIONS AND FINANCE
+29. Front-desk check-in console
+30. Access devices and event logs
+31. Equipment and asset register
+32. Maintenance tickets and inspections
+33. Inventory and procurement
+34. Invoices and payment transactions
+35. Refunds and credit notes
+36. Settlements and reconciliation
+37. Expenses and vendor records
+38. Trainer commissions and payroll exports
+    
+    INTELLIGENCE AND GOVERNANCE
+39. Business reports and custom analytics
+40. Retention and member engagement
+41. AI business copilot
+42. Automation workflow builder
+43. Workflow run history and failures
+44. Notification templates and delivery logs
+45. Integration catalog and configuration
+46. Audit logs and approval queues
+47. Data exports and privacy requests
+48. System health, alerts and operational settings
+
+5.3 Platform super-admin — 18 screen groups
+1. Platform overview and service health.
+2. Tenant directory and tenant details.
+3. Tenant onboarding and verification.
+4. SaaS subscription and plan management.
+5. Feature flags and entitlement configuration.
+6. Platform user and support access.
+7. Tenant suspension and reinstatement.
+8. AI provider and model configuration.
+9. AI evaluations, safety incidents and usage.
+10. Integration registry and credentials status.
+11. Background jobs and failed-event queues.
+12. Payment provider health and webhook logs.
+13. Platform-wide audit and security events.
+14. Support tickets and escalation.
+15. Usage metering and quota enforcement.
+16. Platform revenue and subscription analytics.
+17. Backup, restore and disaster recovery status.
+18. Global configuration and release management.
+Super-admin access must not automatically expose every member's private health records. Support access to tenant data should be purpose-limited, authorized, time-bound where appropriate, and audited.
+5.4 Trainer and professional workspace — 16 screen groups
+1. Trainer home dashboard.
+2. Today's schedule.
+3. Client roster.
+4. Client profile and authorized fitness history.
+5. Fitness assessment form.
+6. Workout-plan builder.
+7. AI-generated plan review.
+8. Exercise substitution editor.
+9. Live session logging.
+10. Client progress comparison.
+11. Nutrition consultation workspace.
+12. Session notes and follow-up tasks.
+13. Availability and leave management.
+14. Packages, credits and session completion.
+15. Performance, utilization and earnings.
+16. Professional profile, credentials and settings.
+5.5 Public web portal — 12 screen groups
+1. Home and product overview.
+2. Gym and studio discovery.
+3. Search results, maps and filters.
+4. Gym and facility details.
+5. Membership pricing and comparison.
+6. Class and event discovery.
+7. Trainer directory.
+8. Trainer profile and service packages.
+9. Trial booking and checkout.
+10. Registration and account access.
+11. Help, policies and contact.
+12. Business partner and gym onboarding.
+5.6 Additional interfaces
+The platform should reserve capacity for the following interfaces without requiring all of them in the first release:
+- Digital kiosk and self-service registration.
+- Tablet-optimized reception console.
+- Optional smartwatch companion.
+- Connected-equipment interface.
+- Corporate wellness portal.
+- Marketplace partner portal.
+- Instructor-specific simplified mobile view.
+UX design rules
+- Every list screen needs loading, empty, error, permission-denied and pagination states.
+- Destructive actions need clear confirmation and appropriate recovery.
+- Financial screens must distinguish pending, successful, failed, refunded and disputed transactions.
+- AI recommendations must be distinguishable from verified records.
+- Member-facing screens must be accessible, localized and responsive.
+- Staff actions should be optimized for speed, with keyboard navigation and bulk operations where safe.
+- Dashboards should show definitions and data freshness rather than presenting unexplained scores.
+6. End-to-end business workflows
+Workflow A — Lead to paying member
+Lead captured
+Deduplicate and assign owner
+Consent-aware engagement and trial booking
+Visit, sales follow-up and plan selection
+Payment confirmation or authorized complimentary enrollment
+Membership activated → onboarding → fitness plan
+
+Business rules:
+- A lead may exist without a member account.
+- A member may exist without a paid subscription.
+- A pending payment does not grant paid membership entitlements.
+- A failed payment creates a follow-up or retry workflow, not a duplicate subscription.
+- Each conversion retains attribution to its original lead and campaign.
+Workflow B — Member books a class
+1. Member selects a branch, class and session.
+2. Backend checks eligibility, remaining credits, booking window and capacity.
+3. Reservation is created atomically.
+4. Payment or credit deduction is recorded when required.
+5. Confirmation and reminder notifications are scheduled.
+6. Member checks in using an authorized method.
+7. Attendance and credit consumption are reconciled.
+8. If a cancellation occurs, the applicable refund/credit policy runs.
+9. A waitlisted member is promoted only if capacity and eligibility still permit it.
+Workflow C — AI creates a daily workout
+1. Load authorized member context and current training-plan version.
+2. Determine equipment, schedule and applicable constraints.
+3. Generate a candidate workout.
+4. Validate the structured result against exercise and training rules.
+5. Request trainer approval when required.
+6. Publish the plan and explain relevant changes.
+7. Record actual workout performance and feedback.
+8. Evaluate the recommendation's quality and outcomes.
+Workflow D — Renewal and retention
+1. Identify memberships approaching expiry.
+2. Evaluate renewal eligibility and available contact permissions.
+3. Group members by actionable business signals.
+4. Generate approved, personalized renewal recommendations.
+5. Create sales tasks or send permitted messages.
+6. Track replies, payments, renewals and opt-outs.
+7. Measure renewal conversion and campaign performance.
+8. Suppress further promotional messaging where required.
+Workflow E — Autonomous operations
+1. An application event or scheduled rule identifies an issue.
+2. A workflow evaluates conditions and required permissions.
+3. The system creates a proposed action.
+4. Low-risk, reversible actions may run automatically under an approved policy.
+5. High-impact actions require human confirmation.
+6. The action runs through the authorized application service.
+7. The result, retries and audit record are stored.
+8. Failed actions are retried safely or sent to a review queue.
+Examples of eligible low-risk automation include creating a task, preparing a report, or drafting a message. Refunds, bulk outreach, membership suspension and physical access changes require stricter controls.
+7. Core data model and database design
+Use PostgreSQL as the primary transactional database. The schema should be normalized around business entities, with JSONB reserved for genuinely variable configuration or provider-specific payloads—not as a substitute for relational design.
+7.1 Tenant and identity model
+Entity	Key fields	Purpose
+organizations	id, name, status, timezone, created_at	Gym business or service provider
+branches	id, organization_id, name, address, timezone	Physical or virtual locations
+users	id, email, phone, status	Authentication identity
+user_profiles	user_id, display_name, locale, preferences	General profile
+organization_memberships	id, organization_id, user_id, role_id, status	User's relationship to an organization
+roles	id, organization_id, name	Permission groups
+permissions	id, resource, action	Allowed operations
+role_permissions	role_id, permission_id	Role-to-permission mapping
+user_branch_access	user_id, branch_id	Optional branch restrictions
+consent_records	id, user_id, purpose, version, status, recorded_at	Consent and preference evidence
+audit_events	id, actor_id, tenant_id, action, target_type, target_id, created_at	Security and business audit trail
+
+A person must not be modeled as belonging exclusively to one organization. Users may have multiple independent roles across organizations, while each request receives a validated tenant context.
+7.2 Membership and finance entities
+Entity	Key fields
+membership_products	id, organization_id, name, product_type, status
+pricing_versions	id, product_id, price, currency, valid_from, valid_to
+membership_entitlements	id, product_id, entitlement_type, configuration
+subscriptions	id, user_id, organization_id, product_id, status, starts_at, ends_at
+subscription_events	id, subscription_id, event_type, actor_id, occurred_at
+membership_freezes	id, subscription_id, starts_at, ends_at, status
+invoices	id, organization_id, customer_id, invoice_number, currency, status, total
+invoice_lines	id, invoice_id, description, quantity, unit_price, tax_amount
+payments	id, invoice_id, provider, provider_reference, amount, currency, status
+refunds	id, payment_id, amount, status, reason
+payment_events	id, provider, event_id, payload_reference, processed_at
+settlements	id, provider, period_start, period_end, status
+
+Additional finance entities should cover credits, discount approvals, coupons, taxes, reconciliation entries, trainer commissions, expenses and vendor records.
+
+Data integrity requirements
+- Use integer minor units or an appropriate fixed-precision decimal representation for monetary values; never binary floating-point for financial calculations.
+- Store currency explicitly.
+- Use UTC timestamps for events and preserve the relevant branch or user time zone for display.
+- Enforce uniqueness on provider transaction identifiers and invoice numbers within the applicable scope.
+- Use immutable financial event history and correction entries instead of silently overwriting historical transactions.
+- Use idempotency keys for payment initiation and other non-repeatable business operations.
+7.3 Fitness and coaching entities
+Entity	Key fields
+fitness_profiles	user_id, goals, experience_level, preferences
+fitness_assessments	id, user_id, assessor_id, assessment_type, recorded_at
+exercise_catalog	id, name, instructions, equipment, difficulty
+exercise_muscle_groups	exercise_id, muscle_group_id, role
+workout_templates	id, organization_id, name, version
+training_plans	id, user_id, coach_id, status, version
+training_plan_sessions	id, plan_id, scheduled_at, status
+planned_exercises	id, session_id, exercise_id, sequence, prescription
+workout_sessions	id, user_id, plan_session_id, started_at, completed_at
+workout_sets	id, session_id, exercise_id, set_number, reps, load, duration
+fitness_measurements	id, user_id, measurement_type, value, unit, recorded_at
+coach_assignments	id, coach_id, user_id, status
+coach_notes	id, coach_id, user_id, content_reference, created_at
+
+Health-related fields and coaching notes require additional access controls. Avoid storing sensitive free-text notes in analytics tables or sending them indiscriminately to AI providers.
+7.4 Booking and operations entities
+- classes
+- class_sessions
+- class_instructors
+- rooms
+- bookings
+- booking_waitlist_entries
+- attendance_events
+- trainer_availability
+- equipment_assets
+- maintenance_tickets
+- maintenance_events
+- inventory_items
+- inventory_movements
+- access_devices
+- access_events
+- notification_preferences
+- notification_jobs
+- notification_delivery_events
+A class session should have a defined capacity, booking window and state. Enforce capacity under concurrent requests using database transactions and suitable locking or atomic reservation logic.
+7.5 AI and automation entities
+Entity	Purpose
+ai_recommendations	Stores structured recommendation, status and version
+ai_model_versions	Tracks provider, model identifier and configuration
+ai_evaluation_runs	Records offline and online evaluation results
+ai_feedback	Captures accepted, edited, rejected or rated recommendations
+workflow_definitions	Versioned automation logic and permissions
+workflow_triggers	Events or schedules that initiate workflows
+workflow_runs	Execution status, start/end time and context reference
+workflow_actions	Individual authorized actions and outcomes
+workflow_approvals	Human approval decisions
+outbox_events	Durable events awaiting delivery
+integration_connections	Provider, tenant scope and secret reference
+integration_sync_runs	Synchronization status, cursor and errors
+
+Do not store API secrets in ordinary integration records. Store encrypted secret references or use a dedicated secrets manager.
+7.6 Database and storage conventions
+- Use UUID identifiers where appropriate for distributed operations and external references.
+- Include created_at and updated_at on mutable business entities.
+- Add optimistic version fields to important editable records.
+- Use foreign keys, unique constraints, checks and explicit state transitions.
+- Partition large append-heavy event tables when measured growth justifies it.
+- Archive or delete data according to documented retention policies.
+- Keep large videos, images and exports in object storage, not PostgreSQL byte fields.
+- Maintain separate analytical views or a warehouse when operational reporting starts affecting transactional performance.
+- Never allow an AI-generated query to bypass application authorization and run unrestricted SQL against production.
+8. API specification
+Use a versioned REST API initially, with OpenAPI documentation. Webhooks and asynchronous event delivery should complement synchronous endpoints.
+
+Base path:
+
+/api/v1
+
+Authentication should use a supported identity implementation with short-lived access tokens or secure server-side sessions. Tenant and branch permissions must be derived and validated by the backend rather than trusted from client-provided identifiers.
+8.1 Endpoint inventory
+Domain	Example endpoints	Priority
+Identity	POST /auth/register, POST /auth/login, POST /auth/refresh, POST /auth/logout	P0
+Organizations	GET /organizations, POST /organizations, GET /organizations/{id}/branches	P0
+Staff and roles	GET /staff, POST /staff/invitations, PUT /roles/{id}/permissions	P0
+Members	GET /members, POST /members, GET /members/{id}	P0
+Membership products	GET /membership-products, POST /membership-products	P0
+Subscriptions	POST /subscriptions, GET /subscriptions/{id}, POST /subscriptions/{id}/freeze	P0
+Billing	POST /invoices, POST /payments/intents, POST /payments/webhooks/{provider}	P0
+Classes	GET /class-sessions, POST /class-sessions, POST /bookings	P0
+Attendance	POST /attendance/check-in, GET /attendance/events	P0
+Trainers	GET /trainers, POST /trainer-assignments	P0
+Exercises	GET /exercises, POST /exercises	P0
+Training plans	POST /training-plans, POST /training-plans/{id}/publish	P0
+Workouts	POST /workout-sessions, POST /workout-sessions/{id}/sets, POST /workout-sessions/{id}/complete	P0
+Leads	POST /leads, GET /leads, POST /leads/{id}/activities	P0
+Tasks	POST /tasks, PATCH /tasks/{id}, GET /tasks	P0
+AI coach	POST /ai/workout-recommendations, POST /ai/chat, POST /ai/feedback	P1
+Business copilot	POST /ai/business-queries, POST /ai/actions/{id}/approve	P1
+Automations	POST /workflows, POST /workflows/{id}/publish, GET /workflow-runs	P1
+Nutrition	GET /foods, POST /meal-logs, POST /meal-plans	P1
+Equipment	GET /equipment, POST /maintenance-tickets	P1
+Marketplace	GET /marketplace/providers, POST /marketplace/bookings	P2
+Platform admin	GET /platform/tenants, GET /platform/health, GET /platform/usage	P0
+
+The exact methods and schemas must be finalized in the OpenAPI contract before implementation. The table is an endpoint inventory, not a complete API contract.
+8.2 Example API contract
+A workout recommendation request could look like this:
+{
+  "goal": "strength",
+  "duration_minutes": 45,
+  "equipment_available": ["dumbbells", "cable_machine"],
+  "training_plan_id": "plan_123",
+  "request_context": "scheduled_workout"
+}
+
+
+The backend must derive the authenticated user, organization context and permissions from the verified session. A client-supplied user ID must never be treated as proof of identity.
+
+A validated response could look like:
+{
+  "recommendation_id": "rec_456",
+  "status": "pending_review",
+  "plan_version": 3,
+  "estimated_duration_minutes": 42,
+  "exercises": [
+    {
+      "exercise_id": "exercise_101",
+      "sets": 3,
+      "repetitions": {
+        "min": 8,
+        "max": 10
+      },
+      "rest_seconds": 90
+    }
+  ],
+  "explanation": "Candidate plan based on the approved training plan and available equipment."
+}
+
+
+These identifiers and values are illustrative. Production contracts must define validation rules, units, error formats, permissions and compatibility behavior.
+8.3 API engineering requirements
+- Consistent pagination, filtering and sorting.
+- Stable error codes and structured validation errors.
+- Idempotency support for payment and booking operations.
+- Correlation IDs for tracing requests across services.
+- API versioning and deprecation policy.
+- Rate limits based on user, tenant, integration and endpoint risk.
+- Webhook signature verification and replay protection.
+- Request validation and output serialization.
+- Per-tenant quotas and usage metering.
+- OpenAPI-based client generation where useful.
+- Automated contract tests and backward-compatibility checks.
+8.4 Event-driven integration contract
+Important domain events include:
+- lead.created
+- lead.assigned
+- trial.booked
+- membership.activated
+- membership.expiring
+- payment.succeeded
+- payment.failed
+- booking.confirmed
+- booking.cancelled
+- attendance.recorded
+- workout.completed
+- ai.recommendation.created
+- workflow.approval.requested
+- maintenance.ticket.created
+Events should have a unique event ID, schema version, event type, occurrence timestamp, tenant context and a reference to the relevant business record.
+
+Use a transactional outbox to ensure a committed business operation and its outgoing event cannot silently diverge. Consumers must handle duplicate delivery safely.
+9. AI architecture and autonomous operations
+This is the core technical differentiator and should receive its own design, testing and governance strategy.
+9.1 AI service architecture
+Member or staff request
+
+AI gateway
+
+Authentication context, data minimization, model selection, quotas and timeouts
+
+Policy and orchestration layer
+
+Intent classification, tool allowlists, workflow state, safety checks and approval rules
+
+Fitness engine
+
+Training rules, constraints, recommendations
+
+
+Business engine
+
+CRM, reports, approved actions
+
+
+
+Application services and audit
+
+Validate → authorize → execute → record outcome
+
+
+9.2 AI capability tiers
+Tier	Capabilities	Execution policy
+Tier 1 — Assist	Explain exercises, summarize records, draft messages	Respond using authorized context
+Tier 2 — Recommend	Suggest workout changes, renewal follow-ups, class scheduling	Validate and present recommendations
+Tier 3 — Prepare	Create draft plans, tasks, campaigns and reports	Save drafts, request approval where required
+Tier 4 — Execute	Send approved messages, create permitted tasks, run scheduled reports	Enforce allowlists, permissions and audit logging
+Tier 5 — Optimize	Adjust eligible workflows using measured outcomes	Controlled experiments, explicit policies and rollback
+
+Tier 5 should not mean unrestricted self-modifying production behavior. Workflow definitions, permissions and safety policies should be versioned and governed independently of the AI model.
+9.3 Fitness intelligence engine
+Start with deterministic logic for safety-critical constraints and use AI for flexible reasoning and personalization.
+
+The engine should combine:
+1. Structured exercise and equipment catalog.
+2. Trainer-defined templates and progression rules.
+3. Member goals and approved constraints.
+4. Workout history and feedback.
+5. Optional wearable data.
+6. A model gateway for recommendations.
+7. A deterministic validation layer.
+8. Outcome tracking and offline evaluations.
+Do not rely on a language model to calculate all training loads, interpret every physiological signal, or guarantee a safe workout. Use explicit application logic for limits and constraints wherever possible.
+9.4 AI evaluation framework
+Maintain a test set that includes:
+- Beginner and advanced training scenarios.
+- Missing or contradictory member data.
+- Equipment unavailable at the selected branch.
+- Conflicting schedule and training-plan constraints.
+- User-reported pain or other safety-sensitive input.
+- Invalid model output.
+- Prompt-injection attempts in member content.
+- Cross-tenant data access attempts.
+- Provider timeout and fallback scenarios.
+- Unauthorized requests to perform business actions.
+Measure:
+- Schema validity.
+- Constraint-violation rate.
+- Safety-review outcomes.
+- Recommendation acceptance and edit rates.
+- Member satisfaction.
+- Response latency and failure rate.
+- Cost per completed AI task.
+- Improvement against a baseline recommendation system.
+Set release gates before enabling AI-generated plans for unsupervised use.
+10. Security, privacy and safety requirements
+Security must be built into the architecture and verified through tests—not added after the feature set is complete.
+10.1 Identity and access security
+- Enforce least privilege.
+- Separate platform support roles from tenant business roles.
+- Check object-level authorization for every sensitive record.
+- Enforce tenant isolation in the application and database access layer.
+- Use secure password hashing through a maintained authentication library.
+- Protect session tokens and support revocation.
+- Offer MFA for privileged accounts and enterprise customers.
+- Rate-limit login, recovery and verification endpoints.
+- Maintain audit trails for sensitive actions.
+- Apply short-lived, narrowly scoped access for external integrations.
+10.2 Data protection
+- TLS for data in transit.
+- Encryption at rest for databases, backups and object storage.
+- Centralized secret management and rotation.
+- Explicit data classifications for public, business, personal, health-related and highly restricted data.
+- Data minimization and purpose limitation.
+- Member-controlled connected-device permissions.
+- Retention schedules and deletion workflows.
+- Controlled exports and logged administrative access.
+- Vendor due diligence for AI, messaging, analytics and payment providers.
+- Documented breach response and recovery procedures.
+10.3 Fitness and health safety
+- Clearly distinguish wellness guidance from medical advice.
+- Do not diagnose illness or claim guaranteed injury prevention.
+- Provide a route to human review for relevant safety-sensitive situations.
+- Do not encourage exercise through reported severe pain, faintness or other potentially urgent symptoms.
+- Require qualified human approval for higher-risk programs according to the product's risk policy.
+- Validate exercise instructions and media before publishing.
+- Treat body measurements, health notes and progress photos as sensitive information.
+- Provide clear controls over who can view or share this information.
+10.4 Biometric and access-control safeguards
+If face or fingerprint authentication is supported:
+- Integrate with qualified access-control providers where practical.
+- Document the purpose and legal basis for collection.
+- Obtain applicable consent and provide appropriate alternatives.
+- Minimize retention and avoid storing raw biometric images unless demonstrably necessary and lawful.
+- Restrict access to biometric records and audit all sensitive operations.
+- Define fallback procedures for false rejection, device failure and emergencies.
+- Validate applicable Indian and other jurisdictional legal requirements before deployment.
+10.5 Regulatory readiness
+For an India-first product, the compliance workstream should cover:
+- Applicable provisions and rules under India's DPDP framework.
+- Consumer protection and membership cancellation policies.
+- Applicable GST and invoicing requirements.
+- Payment-provider obligations and PCI DSS scope.
+- Applicable employment and payroll obligations for staff-related features.
+- Electronic records, consent and communications requirements.
+- Cross-border processing and retention obligations where relevant.
+- Accessibility and platform-specific privacy requirements.
+The applicable requirements should be verified against the law and rules in force at launch, with qualified legal and tax review. This document is not a legal compliance certification.
+11. Non-functional requirements
+These are proposed initial service targets. They must be validated through load testing and adjusted against deployment cost and customer commitments.
+Area	Proposed target
+Availability	99.9% monthly target for core production services
+API latency	p95 under 300 ms for ordinary cached or indexed reads; complex operations have separate budgets
+Booking integrity	No overbooking beyond configured capacity under concurrent requests
+Payment integrity	No duplicate financial effects from retried or duplicated events
+Data isolation	Zero unauthorized cross-tenant access in security tests
+Recovery point objective	Target 15 minutes for critical transactional data, subject to deployment design
+Recovery time objective	Target 4 hours for critical service recovery
+Backup verification	Scheduled restore tests with documented outcomes
+Accessibility	WCAG 2.2 AA target for applicable web experiences
+Mobile reliability	Crash and failed-request monitoring, offline handling for supported workflows
+Observability	Correlated logs, metrics, traces and actionable alerts
+Scalability	Load-tested capacity based on defined user, booking and event workloads
+Localization	Time-zone-aware operation, localized content and currency-aware billing
+Maintainability	Automated tests, versioned contracts and documented deployment procedures
+
+Availability, recovery and performance targets must be supported by architecture, monitoring, staffing and operational budgets. They should not be advertised as achieved until verified in production.
+Example load-test baseline
+Before the first paid production launch, test a representative scenario such as:
+- 1,000 concurrent authenticated users.
+- 100 simultaneous booking attempts against a limited-capacity session.
+- Duplicate payment-webhook delivery.
+- Multiple branch dashboards refreshing concurrently.
+- Background notification and workflow bursts.
+- AI-provider timeout and degraded-service fallback.
+This is an initial test scenario, not a claim that the proposed architecture already supports that load.
+12. Recommended technology stack
+Use a stack that supports fast initial development without locking the product into a single AI or cloud provider.
+Component	Recommendation	Reason
+Member mobile app	React Native + TypeScript	Shared Android/iOS development
+Web applications	Next.js + TypeScript	Member portal and admin workspaces
+UI system	Accessible component library + design tokens	Consistent multi-application experience
+Backend	NestJS + TypeScript	Structured domain modules and API development
+Primary database	PostgreSQL	Relational integrity and transactional workloads
+Cache	Redis when justified	Caching, rate limits and ephemeral state
+Background jobs	Durable queue + transactional outbox	Retries and reliable event processing
+Media storage	S3-compatible object storage	Exercise videos, photos and exports
+AI gateway	Provider-independent application service	Model switching, policy enforcement and usage control
+Search	PostgreSQL search initially; dedicated engine if needed	Avoid unnecessary early infrastructure
+Analytics	PostgreSQL reporting views initially	Add a warehouse when reporting volume warrants it
+Monitoring	OpenTelemetry-compatible logs, metrics and traces	Operational visibility
+Deployment	Managed cloud services and CI/CD	Reduce operational burden
+Testing	Unit, integration, API contract and end-to-end tests	Regression prevention
+
+Why NestJS instead of immediately splitting into microservices? Memberships, payments, bookings and attendance require strong transactional consistency. A modular monolith is easier to build, deploy and debug for an early-stage team. Domain boundaries should make later extraction possible.
+
+A Python AI worker can be introduced separately if computer vision, scientific computing or model-serving workloads justify it. Do not introduce another language simply to call a hosted AI API.
+13. Commercial model and go-to-market strategy
+The product needs a revenue model for gym businesses and a separate, clearly defined consumer monetization model.
+13.1 Gym SaaS plans
+The following are proposed India-first pricing hypotheses to test with real gym operators, not researched competitor prices or finalized rates.
+Starter
+Independent gyms
+
+₹1,499–2,499/month
+
+
+
+- Member and membership management
+- Attendance, basic booking and billing
+- Basic lead pipeline
+- Standard dashboard and reports
+- Limited staff access
+
+Growth
+Growing gyms and studios
+
+₹3,999–6,999/month
+
+
+
+- Starter features
+- Advanced CRM and renewals
+- Trainer and class management
+- Automation workflows
+- AI business insights with usage limits
+- Advanced reporting and integrations
+
+Multi-Branch
+Chains and franchises
+
+₹9,999+/month
+
+
+
+- Centralized multi-branch control
+- Cross-branch memberships
+- Advanced permissions and audit logs
+- Consolidated reporting
+- Higher automation and AI limits
+- Priority support options
+
+
+Pricing should ultimately be based on customer value, branch count, active member count, AI usage, support requirements and integration costs. Hardware, messaging fees, payment processing and bespoke integrations may require separate charges.
+13.2 Consumer monetization
+Possible options:
+- Free fitness profile and basic workout logging.
+- Paid AI coaching subscription.
+- Premium training plans and progress insights.
+- Paid remote trainer consultations.
+- Commission on eligible marketplace bookings.
+- Corporate wellness contracts.
+- Premium analytics or specialized coaching features.
+Avoid charging consumers for essential access to the gym they have already paid to use unless the membership terms clearly specify the relevant service.
+13.3 Recommended first customer
+Start with independent gyms and small multi-location operators that need better membership administration, sales follow-up, billing and retention.
+
+The first product should solve a financially important operational problem. Advanced computer vision and wearable-based recovery predictions can follow once the business has reliable data and paying customers.
+14. Phased implementation roadmap
+The estimates below assume a capable small product team, access to development and testing environments, and integration with existing providers. Actual duration depends on team size, experience, integration complexity and scope.
+
+Phase 0 — Discovery and validation
+2–3 weeks
+
+Interview gym owners, validate willingness to pay, define the MVP, test workflows and confirm payment/access-control integrations.
+
+Exit gate: validated target segment, approved scope, architecture and acceptance criteria.
+
+
+
+
+Phase 1 — SaaS foundation
+4–6 weeks
+
+Authentication, tenants, branches, roles, core database, audit trail, deployment, monitoring and UI design system.
+
+Exit gate: verified tenant isolation, secure access and repeatable deployment.
+
+
+
+
+Phase 2 — Commercial MVP
+6–10 weeks
+
+Members, memberships, payments, attendance, booking, trainer management, lead CRM, notifications and essential reports.
+
+Exit gate: end-to-end workflows tested with a pilot gym.
+
+
+
+
+Phase 3 — AI and automation
+4–7 weeks
+
+AI workout recommendations, plan review, business copilot, renewal workflows, action permissions and AI evaluation suite.
+
+Exit gate: measured AI quality, safe fallback behavior and auditable execution.
+
+
+
+
+Phase 4 — Consumer and connected fitness
+6–10 weeks
+
+Expanded member mobile experience, nutrition, supported wearable integrations, equipment integrations and advanced engagement.
+
+Exit gate: verified device synchronization and member-facing quality checks.
+
+
+
+
+Phase 5 — Marketplace and scale
+Ongoing
+
+Marketplace, franchise tools, corporate wellness, advanced forecasting, validated movement analysis and larger-scale infrastructure.
+
+Exit gate: demonstrated customer demand, reliable operations and sustainable unit economics.
+
+
+
+These phases can overlap when separate engineers own independent modules. The estimates are planning ranges, not a commitment that the full platform will be finished in a particular number of weeks.
+MVP scope control
+For the first commercial release, include:
+- Multi-tenant organization and branch management.
+- Authentication and staff permissions.
+- Member profiles and membership products.
+- Subscription lifecycle and billing.
+- Basic QR or receptionist attendance.
+- Class scheduling and booking.
+- Trainer profiles and basic workout plans.
+- Lead pipeline and follow-up tasks.
+- Essential member mobile or responsive web experience.
+- Owner dashboard and standard reports.
+- Notification service.
+- Audit logs, backups and monitoring.
+Defer marketplace settlement, sophisticated computer vision, advanced biometrics, medical integrations and autonomous pricing changes until the core product is stable and commercially validated.
+15. Testing and release acceptance criteria
+Every module must have testable completion criteria.
+Platform acceptance gates
+- Tenant A cannot read or modify tenant B's records, even by changing identifiers in API requests.
+- Staff permissions are enforced by the backend, not just hidden UI controls.
+- Duplicate payment events cannot create duplicate charges or duplicate membership activations.
+- Concurrent class bookings never exceed capacity.
+- Failed notifications and integration events are retried or surfaced for resolution.
+- Membership freezes, cancellations and refunds follow documented rules.
+- Financial reports reconcile with the underlying transactions.
+- AI-generated workouts conform to schemas and pass applicable constraint checks.
+- AI business actions cannot bypass role permissions or approval requirements.
+- Member consent withdrawal stops future processing for the relevant optional purpose as required by policy.
+- Data export and deletion requests follow the documented retention and legal-hold rules.
+- Backup restoration and disaster recovery are tested before launch.
+Required automated test suites
+1. Unit tests for domain logic and business rules.
+2. Integration tests for database transactions and payment providers.
+3. API contract tests.
+4. Tenant-isolation and authorization tests.
+5. End-to-end tests for member enrollment, payment, booking and attendance.
+6. Concurrency tests for bookings and inventory.
+7. AI evaluation and prompt-injection tests.
+8. Mobile device and accessibility tests.
+9. Performance and load tests.
+10. Backup restoration and deployment rollback tests.
+16. Success metrics and product KPIs
+The platform must measure business outcomes, not just logins and screen views.
+Area	Metrics
+SaaS business	Paid gyms, monthly recurring revenue, customer acquisition cost, gross margin, churn
+Sales	Lead response time, trial booking rate, trial-to-paid conversion
+Membership	Renewal rate, cancellation rate, failed-payment recovery
+Member engagement	Active members, workout completion, booking attendance, weekly consistency
+Coaching	Plan adherence, trainer utilization, session completion, member feedback
+AI quality	Acceptance rate, edit rate, constraint violations, cost per task, latency
+Automation	Successful execution rate, manual work avoided, failure recovery time
+Operations	Equipment downtime, class utilization, check-in reliability
+Platform reliability	Availability, API latency, error rate, recovery time
+Privacy and security	Unauthorized-access incidents, unresolved vulnerabilities, request completion time
+
+Set baselines during pilot deployments. Define targets only after understanding the customer segment, current performance and the measurement methodology.
+
+For example, an increase in renewal rate should be evaluated against a reasonable baseline or comparison group, rather than attributed automatically to AI.
+17. Main risks and mitigation plan
+Risk	Mitigation
+Too many features delay launch	Keep the MVP narrow and gate later releases on demand
+Poor fitness recommendations	Use validated rules, human review and evaluation datasets
+Incorrect AI-generated business actions	Restrict tools, require approval and log outcomes
+Payment or booking inconsistencies	Use transactions, idempotency and reconciliation
+Sensitive data exposure	Enforce tenant isolation, least privilege and data minimization
+Costly wearable and hardware integrations	Start with documented APIs and validate each device before committing
+Weak willingness to pay	Interview buyers and run paid pilots before expanding
+Low member engagement	Test onboarding, reminders and measurable fitness outcomes
+Inaccurate churn predictions	Use explainable signals, measure calibration and avoid unsupported claims
+Operational complexity	Start with a modular monolith and extract services only when justified
+Vendor lock-in	Maintain model, payment and notification abstraction layers
+Marketplace liquidity problems	Expand only after establishing participating providers and reliable booking supply
+
+18. Definition of done for the complete product
+The product is ready for broad commercial launch only when:
+- All P0 workflows work end to end.
+- Membership, booking and payment states remain consistent under failures and retries.
+- Tenant and role boundaries have passed security tests.
+- Member, trainer, staff and owner experiences are usable on their supported devices.
+- AI recommendations meet documented quality and safety thresholds.
+- Automated actions respect permissions and approval policies.
+- Backups, monitoring, incident response and recovery procedures are operational.
+- Privacy notices, consent controls, contractual terms and applicable compliance requirements have been reviewed.
+- At least one pilot business has validated the operational workflows.
+- Pricing, support commitments and deployment costs are commercially sustainable.
+
+19. Final product strategy
+The most defensible version of this platform is not the one with the most screens or the largest number of AI features.
+
+It is the one that connects three feedback loops:
+Fitness loop
+Plan → Train → Record → Evaluate → Adapt
+
+Improves the member's fitness experience using actual outcomes and appropriate oversight.
+
+
+Business loop
+Acquire → Onboard → Engage → Renew → Improve
+
+Connects sales, memberships, attendance, retention and revenue into one operational workflow.
+
+
+Intelligence loop
+Observe → Recommend → Validate → Execute → Measure
+
+Turns AI from a conversational interface into a measurable, controlled operational capability.
